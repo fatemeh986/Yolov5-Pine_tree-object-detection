@@ -126,6 +126,14 @@ python yolov5/train.py \
 
 ---
 
+## 🖼️ Example Detections
+
+Here are two sample detection outputs:
+
+![Detection Example 1](val_batch0_labels.jpg)
+
+![Detection Example 2](val_batch0_pred.jpg)
+
 ## 🔍 Analysis
 
 1. **Dataset Challenges**
