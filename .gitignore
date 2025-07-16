@@ -1,6 +1,10 @@
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
+# ignore all JPGs…
 *.jpg
-!/results/*.jpg
+
+# …except the results folder itself and its JPGs
+!results/
+!results/*.jpg
 *.jpeg
 *.png
 *.bmp
