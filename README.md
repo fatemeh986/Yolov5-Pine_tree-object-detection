@@ -130,9 +130,9 @@ python yolov5/train.py \
 
 Here are two sample detection outputs:
 
-![Detection Example 1](val_batch0_labels.jpg)
+![Detection Example 1](https://imgur.com/a/wsoGKaL)
 
-![Detection Example 2](val_batch0_pred.jpg)
+<!-- ![Detection Example 2](val_batch0_pred.jpg) -->
 
 
 ## 🔍 Analysis
