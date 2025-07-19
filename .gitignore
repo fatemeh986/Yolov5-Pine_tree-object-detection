@@ -4,7 +4,8 @@
 
 # …except the results folder itself and its JPGs
 !results/
-!results/*.jpg
+# !results/*.jpg
+!/results/**/*.jpg
 *.jpeg
 *.png
 *.bmp
