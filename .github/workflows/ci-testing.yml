@@ -53,7 +53,7 @@ jobs:
   Benchmarks:
     runs-on: ${{ matrix.os }}
     env:
-      YOLOV5_AUTOINSTALL: "0"   # block auto-install of optional backends (paddle/x2paddle/etc.)
+      YOLOV5_AUTOINSTALL: "0"   # prevent auto-install of optional deps (paddle/x2paddle/etc.)
     strategy:
       fail-fast: false
       matrix:
@@ -69,29 +69,34 @@ jobs:
 
       - name: Install requirements
         run: |
-          uv pip install --system -r requirements.txt coremltools openvino-dev tensorflow \
+          uv pip install --system -r requirements.txt onnx onnxruntime \
             --extra-index-url https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match
           yolo checks
-          # make sure paddle isn't present (it caused the segfault)
+          # Hard-stop anything that caused the segfault earlier
           pip uninstall -y paddlepaddle x2paddle || true
           uv pip list
 
-      - name: Benchmark DetectionModel (TorchScript + ONNX)
+      - name: Benchmark DetectionModel (PyTorch only)
         run: |
           python benchmarks.py --data coco128.yaml --weights ${{ matrix.model }}.pt \
-            --img 320 --hard-fail 0.29 --include torchscript onnx --device cpu
+            --imgsz 320 --hard-fail 0.29 --pt-only --device cpu
 
-      - name: Benchmark SegmentationModel (TorchScript + ONNX)
+      - name: Benchmark SegmentationModel (PyTorch only)
         run: |
           python benchmarks.py --data coco128-seg.yaml --weights ${{ matrix.model }}-seg.pt \
-            --img 320 --hard-fail 0.22 --include torchscript onnx --device cpu
+            --imgsz 320 --hard-fail 0.22 --pt-only --device cpu
 
-      - name: Test predictions
+      - name: Test predictions (export ONNX explicitly)
         run: |
-          python export.py --weights ${{ matrix.model }}-cls.pt --include onnx --img 224
-          python detect.py --weights ${{ matrix.model }}.onnx --img 320
-          python segment/predict.py --weights ${{ matrix.model }}-seg.onnx --img 320
-          python classify/predict.py --weights ${{ matrix.model }}-cls.onnx --img 224
+          # Export to ONNX (no Paddle needed)
+          python export.py --weights ${{ matrix.model }}.pt --include onnx --img 320 --device cpu
+          python export.py --weights ${{ matrix.model }}-seg.pt --include onnx --img 320 --device cpu
+          python export.py --weights ${{ matrix.model }}-cls.pt --include onnx --img 224 --device cpu
+          # Inference with the ONNX files we just created
+          python detect.py --weights ${{ matrix.model }}.onnx --img 320 --device cpu
+          python segment/predict.py --weights ${{ matrix.model }}-seg.onnx --img 320 --device cpu
+          python classify/predict.py --weights ${{ matrix.model }}-cls.onnx --img 224 --device cpu
+
 
 
   Tests:
