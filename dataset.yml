@@ -1,6 +1,6 @@
 path: dataset
 train: train/images
 val: validations/images
-nc:   1 
+nc: 1
 names:
   0: pine_tree
