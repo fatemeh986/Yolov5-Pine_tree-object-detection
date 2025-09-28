@@ -2,11 +2,11 @@
 
 A lightweight pipeline for detecting pine trees in RGB images using YOLOv5. This repository covers:
 
-* Converting Mask R-CNN JSON annotations to YOLO format
-* Organizing a custom dataset for YOLOv5
-* Running a series of training experiments
-* Comparing results (mAP, recall, precision, confusion matrix)
-* Analysis of performance and next steps
+- Converting Mask R-CNN JSON annotations to YOLO format
+- Organizing a custom dataset for YOLOv5
+- Running a series of training experiments
+- Comparing results (mAP, recall, precision, confusion matrix)
+- Analysis of performance and next steps
 
 ---
 
@@ -35,9 +35,9 @@ A lightweight pipeline for detecting pine trees in RGB images using YOLOv5. This
 
 ## 🗂 Dataset
 
-* **One class**: `pine_tree` (class 0).
+- **One class**: `pine_tree` (class 0).
 
-* **Structure** (root: `data/`):
+- **Structure** (root: `data/`):
 
   ```
   data/
@@ -47,14 +47,14 @@ A lightweight pipeline for detecting pine trees in RGB images using YOLOv5. This
   └─ validations/labels
   ```
 
-* **`yolov5/dataset.yml`**:
+- **`yolov5/dataset.yml`**:
 
   ```yaml
   # root: yolov5/
   path: ../data
   train: train/images
-  val:   validations/images
-  nc:    1
+  val: validations/images
+  nc: 1
   names:
     0: pine_tree
   ```
@@ -108,21 +108,21 @@ python yolov5/train.py \
 
 ### Quantitative Metrics
 
-| Experiment      | Precision | Recall | mAP\@50 | mAP\@50-95 | “Accuracy” (TP/(TP+FP+FN)) |
-| --------------- | :-------: | :----: | :-----: | :--------: | :------------------------: |
-| pine\_tree\_run |   0.664   |  0.600 |  0.646  |    0.417   |           46.2 %           |
-| exp\_yolov5m2   |     —     |  0.830 |    —    |      —     |           41.5 %           |
+| Experiment    | Precision | Recall | mAP\@50 | mAP\@50-95 | “Accuracy” (TP/(TP+FP+FN)) |
+| ------------- | :-------: | :----: | :-----: | :--------: | :------------------------: |
+| pine_tree_run |   0.664   | 0.600  |  0.646  |   0.417    |           46.2 %           |
+| exp_yolov5m2  |     —     | 0.830  |    —    |     —      |           41.5 %           |
 
-*(Detailed logs are in each run’s `results.txt`.)*
+_(Detailed logs are in each run’s `results.txt`.)_
 
 ### Best Confusion Matrix
 
 ![](runs/val/val_exp_yolov5m2/confusion_matrix.png)
 
-* **True Positive Rate** (recall): 83 %
-* **False Negative Rate**: 17 %
-* **False Positive Rate** (background→pine): 100 %
-* Implicit background class yields a 2×2 matrix for single‐class detection.
+- **True Positive Rate** (recall): 83 %
+- **False Negative Rate**: 17 %
+- **False Positive Rate** (background→pine): 100 %
+- Implicit background class yields a 2×2 matrix for single‐class detection.
 
 ---
 
@@ -134,33 +134,29 @@ Here are two sample detection outputs:
 
 ![Detection Example 2](results/val_batch0_pred.jpg)
 
-
 ## 🔍 Analysis
 
 1. **Dataset Challenges**
-
-   * **Size & diversity**: only \~150 train images with limited backgrounds
-   * **Image quality**: some images are low-contrast or blurred
-   * **Single‐class, implicit negatives**: no explicit “background” boxes
+   - **Size & diversity**: only \~150 train images with limited backgrounds
+   - **Image quality**: some images are low-contrast or blurred
+   - **Single‐class, implicit negatives**: no explicit “background” boxes
 
 2. **Model Capacity & Augmentation**
-
-   * Upgrading to YOLOv5-m and applying evolved hyperparameters boosted recall from 60 % → 83 %.
-   * Precision remains limited by high false positives on complex backgrounds.
+   - Upgrading to YOLOv5-m and applying evolved hyperparameters boosted recall from 60 % → 83 %.
+   - Precision remains limited by high false positives on complex backgrounds.
 
 3. **Detection‐Accuracy vs. Classification**
-
-   * In object detection, we measure precision/recall/mAP; the “accuracy” here is TP/(TP+FP+FN) ≈ 41 %.
+   - In object detection, we measure precision/recall/mAP; the “accuracy” here is TP/(TP+FP+FN) ≈ 41 %.
 
 ---
 
 ## 🚀 Next Steps
 
-* **Expand & diversify data**: collect more scenes (different lighting, angles, seasons).
-* **Improve annotations**: tighter, more consistent bounding boxes; consider adding a few explicit “background” crops for negative sampling.
-* **Multi-spectral inputs**: include NIR or depth channels if available.
-* **Advanced augmentation**: copy-paste, stronger color/scale/perspective variants.
-* **Ensemble & TTA**: combine multiple runs or test-time augmentations for gain.
+- **Expand & diversify data**: collect more scenes (different lighting, angles, seasons).
+- **Improve annotations**: tighter, more consistent bounding boxes; consider adding a few explicit “background” crops for negative sampling.
+- **Multi-spectral inputs**: include NIR or depth channels if available.
+- **Advanced augmentation**: copy-paste, stronger color/scale/perspective variants.
+- **Ensemble & TTA**: combine multiple runs or test-time augmentations for gain.
 
 ---
 
@@ -171,34 +167,38 @@ Here are two sample detection outputs:
    ```bash
    pip install -r yolov5/requirements.txt
    ```
+
 2. **Convert annotations**
 
    ```bash
    python convert_to_yolo.py ...
    ```
+
 3. **Train**
 
    ```bash
    python yolov5/train.py --data yolov5/dataset.yml --name your_experiment
    ```
+
 4. **Validate**
 
    ```bash
    python yolov5/val.py --weights runs/train/your_experiment/weights/best.pt \
-                        --data yolov5/dataset.yml \
-                        --save-conf --verbose --name val_your_experiment
+     --data yolov5/dataset.yml \
+     --save-conf --verbose --name val_your_experiment
    ```
+
 5. **Detect**
 
    ```bash
    python yolov5/detect.py --weights runs/train/your_experiment/weights/best.pt \
-                          --source path/to/images \
-                          --save-txt --name detect_your_experiment
+     --source path/to/images \
+     --save-txt --name detect_your_experiment
    ```
 
 ---
 
 > **Acknowledgments**
 >
-> * [Ultralytics YOLOv5](https://github.com/ultralytics/yolov5)
-> * Early experiments with Mask R-CNN annotations
+> - [Ultralytics YOLOv5](https://github.com/ultralytics/yolov5)
+> - Early experiments with Mask R-CNN annotations
