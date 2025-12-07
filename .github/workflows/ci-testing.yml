@@ -93,7 +93,7 @@ jobs:
           python export.py --weights ${{ matrix.model }}-seg.pt --include onnx --img 320 --device cpu
           python export.py --weights ${{ matrix.model }}-cls.pt --include onnx --img 224 --device cpu
           # Inference with the ONNX files we just created
-          python detect.py --weights ${{ matrix.model }}.onnx --img 320 --device cpu
+          python detect.py --weights ${{ matrix.model }}.pt --img 320 --device cpu
           python segment/predict.py --weights ${{ matrix.model }}-seg.onnx --img 320 --device cpu
           python classify/predict.py --weights ${{ matrix.model }}-cls.onnx --img 224 --device cpu
 
